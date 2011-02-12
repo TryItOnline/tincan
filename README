@@ -1,0 +1,9 @@
+TinCan is a stack-based language with only one operator, Subtract and branch if less than or equal to zero, with a few modifications.
+
+In TinCan, any line of the source that is not 40 characters long or is not surrounded by hash symbols is helpfully considered a comment. Within each line, there are three arguments separated by commas. First the Differential, followed by the Storage, followed by the Address. Spacing does not matter, but do keep in mind each line must be 40 characters long. There are 26 variables for your use, all set at zero at the initialization of the program. The names of these variables are the capital letters 'A' through 'Z'.
+The Differential can be variable or a static integer, it does not matter. The Storage is a bit more picky, it requires a variable to work. Address can be variable or static.
+A typical line in TinCan might look like this:
+# -1, A, 2                             #
+What does this mean? The value -1 is subtracted from the variable A, which is set at zero at program initialization. Since the result of this operation (1) is positive, it will store the result into A, disregard the Address, and move to the next line. Now if the Differential had been, say, 3, the program would have jumped to line "Address" within the program due to the result of the operation being negative, but the result would have still been stored in A.
+Regardless of the result of the operation, if the address is set to -1 the result will be pushed onto the stack, and the next line will be executed. When the program execution is over, the "Can" (stack) "Explodes" and empties its contents as ASCII to the console in a FIFO manner.
+To instantly end your program regardless of location, make it go to any Address outside of normal execution and it will end.
