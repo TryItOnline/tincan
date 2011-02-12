@@ -1,7 +1,8 @@
 <?php
-//TinCan interpereter v1.0
+//TinCan interpereter v1.2
 $stack = array();
 $vars = array();
+$executed = array();
 $list = array_fill(0, 90, 0);
 echo "Enter filename to interperet> ";
 $filename = trim(fgets(STDIN));
@@ -12,14 +13,17 @@ if(!strpos($filename, '.can')){
 }
 //Read file into array
 $instructionarray = file($filename, FILE_SKIP_EMPTY_LINES|FILE_IGNORE_NEW_LINES);
+$executed = $instructionarray;
 
 //Strip all non 40-length lines and lines not surrounded by hashes
 foreach($instructionarray as $key => &$instruction){
 	if(strlen($instruction) != 40){
 		unset($instructionarray[$key]);
+		unset($executed[$key]);
 	}
 	if((substr($instruction, 0, 1) != '#') or (substr($instruction, -1, 1) != '#')){
 		unset($instructionarray[$key]);
+		unset($executed[$key]);
 	}
 	$instruction = str_replace('#', '', $instruction);
 	$instruction = str_replace(' ', '', $instruction);
@@ -32,9 +36,12 @@ $instructionarray = array_values($instructionarray);
 //Execute program
 $i = 0;
 $j = 0;
+echo "\r\nCurrently executed instruction:\r\n----------------------------------------\r\n";
 while($i < count($instructionarray)){
 	$line = $instructionarray[$i];
 	$args = explode(',', $line);
+	echo $executed[$key]."\r";
+	
 	if(count($args) != 3){echo "\r\n\r\nERROR: Line $i has the wrong number of arguments."; die;}
 	
 	foreach($args as $key => $arg){
@@ -81,6 +88,9 @@ while($i < count($instructionarray)){
 	$i++;
 	$j++;
 }
+echo "\r\n\r\n";
 foreach($stack as $value){
 	echo chr($value);
 }
+echo "\r\n\r\n";
+?>
