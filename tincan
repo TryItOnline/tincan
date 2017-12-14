@@ -72,7 +72,7 @@ while($i < count($instructionarray)){
 	}
 	if(substr($vars[1], 0, 1) == '%'){
 		$store = substr($vars[1], 1);
-		$vars[1] = $list[$store];
+		$vars[1] = isset($list[$store]) ? $list[$store] : 0;
 	}
 	else{
 		error_log("ERROR: Argument $key on line $i is not a storable location.");
