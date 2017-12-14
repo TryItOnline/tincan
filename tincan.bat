@@ -1,2 +1,0 @@
-php tincan.php
-pause

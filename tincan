@@ -1,16 +1,12 @@
+#!/usr/bin/env php
 <?php
-//TinCan interpereter v1.2
+//TinCan interpereter v1.2 (modified for use on TIO)
 $stack = array();
 $vars = array();
 $executed = array();
 $list = array_fill(0, 90, 0);
-echo "Enter filename to interperet> ";
-$filename = trim(fgets(STDIN));
+$filename = $argv[1];
 
-//Check for file extension, if it does not exist, add it
-if(!strpos($filename, '.can')){
-	$filename.='.can';
-}
 //Read file into array
 $instructionarray = file($filename, FILE_SKIP_EMPTY_LINES|FILE_IGNORE_NEW_LINES);
 $executed = $instructionarray;
@@ -30,20 +26,24 @@ foreach($instructionarray as $key => &$instruction){
 }
 
 //Check to make sure there are still instructions left to run
-if(count($instructionarray) == 0){echo "\r\n\r\nERROR: You seem to be too stupid to include a single valid instruction."; die;}
+if(count($instructionarray) == 0){
+	error_log("ERROR: There must be at least a single valid instruction.");
+	exit(1);
+}
 $instructionarray = array_values($instructionarray);
 
 //Execute program
 $i = 0;
 $j = 0;
-echo "\r\nCurrently executed instruction:\r\n----------------------------------------\r\n";
 while($i < count($instructionarray)){
 	$line = $instructionarray[$i];
 	$args = explode(',', $line);
-	echo $executed[$key]."\r";
-	
-	if(count($args) != 3){echo "\r\n\r\nERROR: Line $i has the wrong number of arguments."; die;}
-	
+
+	if(count($args) != 3){
+		error_log("ERROR: Line $i has the wrong number of arguments.");
+		exit(1);
+	}
+
 	foreach($args as $key => $arg){
 		$vars[$key] = $arg;
 		if(!is_numeric($arg)){
@@ -60,10 +60,13 @@ while($i < count($instructionarray)){
 			elseif(($ord >= 65) and ($ord <= 90)){
 				$vars[$key] = '%'.$ord;
 			}
-			else{echo "\r\n\r\nERROR: Argument $key on line $i is not numeric."; die;}
+			else{
+				error_log("ERROR: Argument $key on line $i is not numeric.");
+				exit(1);
+			}
 		}
 	}
-	
+
 	if(substr($vars[0], 0, 1) == '%'){
 		$vars[0] = $list[substr($vars[0], 1)];
 	}
@@ -71,7 +74,10 @@ while($i < count($instructionarray)){
 		$store = substr($vars[1], 1);
 		$vars[1] = $list[$store];
 	}
-	else{echo "\r\n\r\nERROR: Argument $key on line $i is not a storable location."; die;}
+	else{
+		error_log("ERROR: Argument $key on line $i is not a storable location.");
+		exit(1);
+	}
 	if(substr($vars[2], 0, 1) == '%'){
 		$vars[2] = $list[substr($vars[2], 1)];
 	}
@@ -84,13 +90,11 @@ while($i < count($instructionarray)){
 	if($vars[2] == -1){
 		array_push($stack, $list[$store]);
 	}
-	
+
 	$i++;
 	$j++;
 }
-echo "\r\n\r\n";
 foreach($stack as $value){
 	echo chr($value);
 }
-echo "\r\n\r\n";
 ?>
